@@ -42,13 +42,12 @@ resource "aws_instance" "jenkins-master" {
 
   provisioner "file" {
     source      = "./installation-scripts/ubuntu-installation.sh"
-    destination = "/tmp/script.sh"
+    destination = "/home/ubuntu/script.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /tmp/script.sh",
-      "sudo /tmp/script.sh",
+      "sudo chmod +x /home/ubuntu/script.sh"
     ]
   }
 }

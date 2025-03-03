@@ -19,9 +19,9 @@ data "aws_ami" "ubuntu_latest" {
   owners = ["099720109477"] # Canonical's AWS Account ID (official Ubuntu images)
 }
 
-data "local_file" "jenkins-installation" {
-  filename = "${path.module}/installation-scripts/installation.sh"
-}
+# data "local_file" "jenkins-installation" {
+#   filename = "${path.module}/installation-scripts/ubuntu-installation.sh"
+# }
 
 data "http" "myip" {
   url = "https://ipv4.icanhazip.com"

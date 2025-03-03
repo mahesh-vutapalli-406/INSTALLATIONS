@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
 # Update the system
 sudo apt update -y
 sudo apt upgrade -y
@@ -26,8 +25,9 @@ sudo apt update -y
 sudo apt install jenkins -y
 
 # Start and Enable Jenkins Service
-sudo systemctl start jenkins
 sudo systemctl enable jenkins
+sudo systemctl start jenkins
+
 
 # Display Jenkins Status
-sudo systemctl status jenkins
+#sudo systemctl status jenkins

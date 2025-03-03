@@ -16,10 +16,14 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Install Terrascan
         run: |
-          curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)" -o terrascan
+          sudo apt-get update && sudo apt-get install -y jq
+          TERRASCAN_URL=$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | jq -r '.assets[] | select(.name | contains("linux_amd64")) | .browser_download_url')
+          curl -L "$TERRASCAN_URL" -o terrascan
           chmod +x terrascan
           sudo mv terrascan /usr/local/bin/
 

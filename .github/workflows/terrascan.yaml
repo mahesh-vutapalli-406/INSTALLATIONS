@@ -132,7 +132,7 @@ jobs:
 
           # Run Terrascan
           terrascan init
-          terrascan scan -d .  -l debug -o json > terrascan-report.json
+          terrascan scan -d .
 
       - name: Upload Terrascan Report as Artifact
         uses: actions/upload-artifact@v4

@@ -36,7 +36,12 @@ jobs:
           terrascan version
 
       - name: Run Terrascan Scan and Save Report
-        run: terrascan scan -t aws -d ./Jenkins-installation -o json > terrascan-report.json
+        run: |
+          export TF_LOG=DEBUG
+          export TERRASCAN_LOG_LEVEL=debug
+          sudo apt-get update
+          sudo apt-get install -y terraform jq
+          terrascan scan -t aws -d ./Jenkins-installation -o json > terrascan-report.json
 
       - name: Upload Terrascan Report as Artifact
         uses: actions/upload-artifact@v4

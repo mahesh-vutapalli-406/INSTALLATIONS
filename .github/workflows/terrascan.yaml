@@ -12,7 +12,7 @@ on:
 jobs:
   terrascan: # Job name
     name: Terrascan Security Scan
-    runs-on: terrascan # runner name (here it is self hosted runner)
+    runs-on: ubuntu-latest # runner name (here it is self hosted runner)
 
     steps:
       - name: Checkout Repository  #  cloning the repo
@@ -38,29 +38,26 @@ jobs:
       #     echo "HashiCorp TLS version check"
       #     curl -v https://registry.terraform.io/v1/providers/hashicorp/tls/versions
 
+      - name: Terraform installation
+        run: |
+          export TF_LOG=DEBUG
+          export TERRASCAN_LOG_LEVEL=debug
+          sudo apt update && sudo apt install -y wget unzip
+          # Add HashiCorp repository without prompt
+          sudo rm -f /usr/share/keyrings/hashicorp-archive-keyring.gpg  # Delete existing file
+          wget -q -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update
+          # installing tf version 1.5.0
+          sudo apt install -y terraform=1.5.0-1
+          # Terraform version check
+          terraform -v
+          # Set Terraform plugin cache
+          mkdir -p ~/.terraform.d/plugin-cache
+          export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+      
       - name: Run Terrascan Scan and Save Report
         run: |
-           export TF_LOG=DEBUG
-           export TERRASCAN_LOG_LEVEL=debug
-           sudo apt update && sudo apt install -y wget unzip
-
-           # Add HashiCorp repository without prompt
-           sudo rm -f /usr/share/keyrings/hashicorp-archive-keyring.gpg  # Delete existing file
-           wget -q -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-
-           echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-
-           sudo apt update
-           # installing tf version 1.5.0
-           sudo apt install -y terraform=1.5.0-1
-
-           # Terraform version check
-           terraform -v
-
-           # Set Terraform plugin cache
-           mkdir -p ~/.terraform.d/plugin-cache
-           export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
-
            # Force Terraform to retry provider download
            cd Jenkins-installation
            echo "terraform init with retries"

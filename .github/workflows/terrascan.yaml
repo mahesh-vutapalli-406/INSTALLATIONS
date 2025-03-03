@@ -80,7 +80,7 @@ on:
 jobs:
   terrascan:
     name: Terrascan Security Scan
-    runs-on: ubuntu-latest
+    runs-on: terrascan
 
     steps:
       - name: Checkout Repository

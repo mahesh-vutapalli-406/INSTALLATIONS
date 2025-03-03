@@ -1,0 +1,34 @@
+name: Terrascan Scan
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  terrascan:
+    name: Terrascan Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Terrascan
+        run: |
+          curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)" -o terrascan
+          chmod +x terrascan
+          sudo mv terrascan /usr/local/bin/
+
+      - name: Run Terrascan Scan and Save Report
+        run: terrascan scan -t aws -d ./Jenkins-installation -o json > terrascan-report.json
+
+      - name: Upload Terrascan Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terrascan-report
+          path: terrascan-report.json
+          retention-days: 5

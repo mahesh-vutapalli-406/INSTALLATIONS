@@ -35,6 +35,14 @@ jobs:
         run: |
           terrascan version
 
+      - name: connectivity tests
+        run: |
+           curl -s https://api.github.com/rate_limit | jq
+           sleep 1
+           echo "hashicorp tls version checks"
+           curl -v https://registry.terraform.io/v1/providers/hashicorp/tls/versions
+
+
       - name: Run Terrascan Scan and Save Report
         run: |
           export TF_LOG=DEBUG

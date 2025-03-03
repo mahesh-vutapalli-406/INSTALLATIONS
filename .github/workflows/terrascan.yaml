@@ -65,7 +65,8 @@ jobs:
 
            # Run Terrascan
            terrascan init
-           terrascan scan -d . -o json > terrascan-report.json
+           #terrascan scan -d . -o json > terrascan-report.json
+           terrascan scan -d
         continue-on-error: true
 
       - name: Upload Terrascan Report as Artifact

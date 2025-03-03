@@ -17,16 +17,23 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT_TOKEN }}
+        # with:
+        #   token: ${{ secrets.PAT_TOKEN }}
 
       - name: Install Terrascan
         run: |
           sudo apt-get update && sudo apt-get install -y jq
-          TERRASCAN_URL=$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | jq -r '.assets[] | select(.name | contains("linux_amd64")) | .browser_download_url')
-          curl -L "$TERRASCAN_URL" -o terrascan
-          chmod +x terrascan
-          sudo mv terrascan /usr/local/bin/
+          sudo curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Linux_x86_64.tar.gz")" > terrascan.tar.gz
+          sudo tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
+          sudo install terrascan /usr/local/bin && rm terrascan
+          # TERRASCAN_URL=$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | jq -r '.assets[] | select(.name | contains("linux_amd64")) | .browser_download_url')
+          # curl -L "$TERRASCAN_URL" -o terrascan
+          # chmod +x terrascan
+          # sudo mv terrascan /usr/local/bin/
+
+      - name: terrascanversion
+        run: |
+          terrascan version
 
       - name: Run Terrascan Scan and Save Report
         run: terrascan scan -t aws -d ./Jenkins-installation -o json > terrascan-report.json
